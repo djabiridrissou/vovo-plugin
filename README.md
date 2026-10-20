@@ -2,7 +2,9 @@
 
 Sources de contenu de vovoscan, décrites par des **manifestes de règles JSON** : aucun code, seulement des
 requêtes vers les hôtes déclarés et des extractions (JSONPath, sélecteurs CSS) suivies de transformations connues.
-Le moteur qui les interprète est dans le backend (`vovoscan-be`, `features/catalog/data/sources/rules/`).
+Le serveur vovoscan les installe, les active (droits et réglages exigés) et distribue leur manifeste ; **l'appli
+mobile les interprète et fait elle-même les requêtes** (`vovoscan-mob`, `core/sources`) : leur contenu ne passe
+jamais par nos serveurs. Le backend valide le contrat (`vovoscan check-source`).
 
 ## Contenu
 
@@ -10,7 +12,7 @@ Le moteur qui les interprète est dans le backend (`vovoscan-be`, `features/cata
 schema/source.schema.json      contrat v1 (copie de vovoscan-be : src/vovoscan/features/catalog/domain/contract/)
 sources/<clé>/source.json      un manifeste par source
 sources/<clé>/README.md        droits, réglages, activation
-scripts/check.sh               valide tous les manifestes avec le moteur du backend
+scripts/check.sh               valide tous les manifestes avec le contrat du backend
 ```
 
 ## Vérifier
@@ -29,7 +31,8 @@ scripts/check.sh          # backend voisin (../backend ou ../vovoscan-be), ou VO
   "default" }`. Transformations : `trim`, `collapseSpaces`, `string`, `number`, `integer`, `lower`, `absUrl`,
   `first`, `notNull`, `regex`, `replace`, `join`, `map`, `pluck`, `format`.
 - Modèles : `{{settings.<réglage>}}`, `{{page}}`, `{{search}}`, `{{lang}}`, `{{id}}` (titre), `{{unitId}}` (unité).
-- Hôtes : seuls ceux de `hosts` et des réglages de type `url` sont contactés ; jamais d'adresse privée.
+- Hôtes : l'appli ne contacte que ceux de `hosts` et des réglages de type `url`, avec un client HTTP séparé qui
+  n'envoie jamais la session vovoscan.
 - **Droits** : `rights.basis` vaut `public-domain` ou `licensed`, et `rights.notes` dit les conditions de la source.
   Le backend refuse d'activer une source sans base de droits confirmée par un admin (preuve exigée pour `licensed`).
   Pas de source qui contourne une protection (CAPTCHA, anti-bot) ni qui viole les conditions d'un site.
