@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://vovoscan.app/schemas/source/1.json",
   "title": "vovoscan source manifest",
-  "description": "Une source de contenu décrite par des règles déclaratives : aucune exécution de code, seulement des requêtes vers les hôtes déclarés et des extractions (JSONPath, CSS) suivies de transformations connues. Contrat version 1. Copie de référence : vovoscan-be, src/vovoscan/features/catalog/domain/contract/source.schema.json.",
+  "description": "A content source described by declarative rules: no code execution, only requests to the declared hosts and extractions (JSONPath, CSS) followed by known transformations. Contract version 1. Reference copy: vovoscan-be, src/vovoscan/features/catalog/domain/contract/source.schema.json.",
   "type": "object",
   "required": [
     "contractVersion",
@@ -27,7 +27,7 @@
     "key": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9-]{1,62}$",
-      "description": "Identifiant stable, en kebab-case. « vovoscan » est réservé à la source interne."
+      "description": "Stable identifier, in kebab-case. \"vovoscan\" is reserved for the internal source."
     },
     "name": {
       "type": "string",
@@ -77,18 +77,18 @@
             "public-domain",
             "licensed"
           ],
-          "description": "Base de droits revendiquée ; l'admin la confirme à l'activation (preuve exigée pour licensed)."
+          "description": "Claimed rights basis; an admin confirms it on activation (proof required for licensed)."
         },
         "notes": {
           "type": "string",
           "minLength": 10,
-          "description": "Conditions de la source : licence, obligations, limites géographiques."
+          "description": "The source's terms: licence, obligations, geographic limits."
         }
       }
     },
     "settings": {
       "type": "object",
-      "description": "Réglages fixés par un admin à l'installation (adresse d'une instance, d'un miroir…). Utilisables dans les modèles : {{settings.nom}}.",
+      "description": "Settings set by an admin at install time (address of an instance, a mirror…). Usable in templates: {{settings.name}}.",
       "additionalProperties": {
         "$ref": "#/$defs/setting"
       }
@@ -98,7 +98,7 @@
       "items": {
         "type": "string"
       },
-      "description": "Hôtes fixes autorisés en plus de ceux des réglages de type url."
+      "description": "Fixed hosts allowed in addition to those from url-type settings."
     },
     "rateLimit": {
       "type": "object",
@@ -202,7 +202,7 @@
                     "id"
                   ],
                   "additionalProperties": false,
-                  "description": "Le titre est lu d'un seul tenant (livre en un fichier).",
+                  "description": "The title is read as a single unit (a book in one file).",
                   "properties": {
                     "id": {
                       "type": "string"
@@ -281,7 +281,7 @@
                 },
                 "mediaType": {
                   "const": "application/epub+zip",
-                  "description": "EPUB seulement pour l'instant : un fichier fermé, que le lecteur affiche sans exécuter de script."
+                  "description": "EPUB only for now: a self-contained file that the reader displays without running scripts."
                 }
               }
             }
@@ -333,14 +333,14 @@
       "properties": {
         "url": {
           "type": "string",
-          "description": "Modèle d'URL : {{settings.x}}, {{page}}, {{search}}, {{lang}}, {{id}}, {{unitId}}."
+          "description": "URL template: {{settings.x}}, {{page}}, {{search}}, {{lang}}, {{id}}, {{unitId}}."
         },
         "query": {
           "type": "object",
           "additionalProperties": {
             "type": "string"
           },
-          "description": "Paramètres ; une valeur vide n'est pas envoyée."
+          "description": "Parameters; an empty value is not sent."
         },
         "type": {
           "enum": [
@@ -351,7 +351,7 @@
       }
     },
     "selector": {
-      "description": "Liste de nœuds : un JSONPath (« $.results[*] ») ou un sélecteur CSS ({\"css\": \"div.card\"}).",
+      "description": "List of nodes: a JSONPath (\"$.results[*]\") or a CSS selector ({\"css\": \"div.card\"}).",
       "oneOf": [
         {
           "type": "string",
@@ -466,14 +466,14 @@
           "properties": {
             "format": {
               "type": "string",
-              "description": "Modèle où {value} est la valeur courante ; {{settings.x}} et les variables y sont aussi remplacées."
+              "description": "Template where {value} is the current value; {{settings.x}} and the variables are substituted too."
             }
           }
         }
       ]
     },
     "value": {
-      "description": "Une valeur : un JSONPath, ou un objet path / css / const / template, suivi de transformations.",
+      "description": "A value: a JSONPath, or a path / css / const / template object, followed by transformations.",
       "oneOf": [
         {
           "type": "string",
@@ -492,11 +492,11 @@
             },
             "attr": {
               "type": "string",
-              "description": "text (défaut), html, ou le nom d'un attribut"
+              "description": "text (default), html, or an attribute name"
             },
             "all": {
               "type": "boolean",
-              "description": "Toutes les correspondances (liste) plutôt que la première."
+              "description": "All matches (a list) rather than the first."
             },
             "const": {},
             "template": {

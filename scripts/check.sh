@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Valide tous les manifestes avec le moteur du backend (contrat v1).
-# Par défaut, le backend voisin (../backend ou ../vovoscan-be) ; sinon VOVOSCAN_BE=<chemin du dépôt vovoscan-be>.
+# Validates every manifest with the backend engine (v1 contract).
+# Defaults to the sibling backend (../backend or ../vovoscan-be); otherwise VOVOSCAN_BE=<path to the vovoscan-be repository>.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 backend="${VOVOSCAN_BE:-}"
@@ -11,7 +11,7 @@ if [[ -z "$backend" ]]; then
   echo "Backend not found: clone vovoscan-be next to this repository or set VOVOSCAN_BE." >&2
   exit 2
 fi
-# Le schéma d'ici doit être celui du moteur.
+# The schema here must be the engine's schema.
 if ! cmp -s schema/source.schema.json "$backend/src/vovoscan/features/catalog/domain/contract/source.schema.json"; then
   echo "schema/source.schema.json differs from the backend contract: copy it again." >&2
   exit 1

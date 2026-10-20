@@ -22,7 +22,7 @@
       "label": "Project Gutenberg mirror",
       "type": "url",
       "required": true,
-      "help": "A private or official mirror serving /cache/epub/<id>/. Each book file is fetched once, then served from vovoscan."
+      "help": "A private or official mirror serving /cache/epub/<id>/. Readers' devices download each book from it once, then read it offline."
     },
     "languages": {
       "label": "Languages",
