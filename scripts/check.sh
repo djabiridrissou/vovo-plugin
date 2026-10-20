@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
-# Validates every manifest with the backend engine (v1 contract).
-# Defaults to the sibling backend (../backend or ../vovoscan-be); otherwise VOVOSCAN_BE=<path to the vovoscan-be repository>.
+# Checks the repository:
+#   1. manifest versions are semver, and bumped when a manifest changed since VOVO_BASE_REF (default HEAD);
+#   2. repo.json is up to date (python3 scripts/build-index.py regenerates it);
+#   3. every manifest is valid for the backend engine (v1 contract).
+# Backend: the sibling ../backend or ../vovoscan-be, otherwise VOVOSCAN_BE=<path to the vovoscan-be repository>.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+python3 scripts/check-versions.py
+python3 scripts/build-index.py --check
 backend="${VOVOSCAN_BE:-}"
 for candidate in ../backend ../vovoscan-be; do
   [[ -z "$backend" && -f "$candidate/pyproject.toml" ]] && backend="$candidate"

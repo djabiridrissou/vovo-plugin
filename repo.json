@@ -1,0 +1,30 @@
+{
+  "formatVersion": 1,
+  "id": "app.vovoscan.official",
+  "name": "vovoscan official sources",
+  "homepage": "https://github.com/djabiridrissou/vovo-plugin",
+  "sources": [
+    {
+      "key": "gutenberg",
+      "name": "Project Gutenberg",
+      "version": "1.0.0",
+      "contractVersion": 1,
+      "kinds": [
+        "book"
+      ],
+      "langs": [
+        "en",
+        "fr",
+        "de",
+        "es",
+        "it",
+        "pt",
+        "nl"
+      ],
+      "rights": "public-domain",
+      "manifest": "sources/gutenberg/source.json",
+      "sha256": "5466f1cdcb954f6d0e21f5b7887d9bba233adc8805e1e7c4453129c9c09ea3cf",
+      "changes": "First release.\n\n- Browse and search the Project Gutenberg catalog through a Gutendex instance (books still under copyright are excluded).\n- Books are EPUB files downloaded from a Project Gutenberg mirror and read on the device.\n- Settings: Gutendex instance, Project Gutenberg mirror, catalog languages (default: en,fr)."
+    }
+  ]
+}

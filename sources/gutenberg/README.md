@@ -14,7 +14,10 @@ Classic books from the Project Gutenberg catalog, public domain in the United St
   Project Gutenberg forbids automated access to gutenberg.org: the catalog comes from a Gutendex instance
   (preferably our own; the public instance asks you to host one for sustained use), the files from a mirror.
 
-## Settings (on activation)
+## Settings
+
+Filled by an admin on activation (official source), or by the user in the app when added from the repository,
+a link or a `.vovo` file.
 
 | Setting | Required | Purpose |
 |---|---|---|
