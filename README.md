@@ -42,6 +42,8 @@ It runs, in order: `check-versions.py` (see [Versioning and updates](#versioning
 
 ## Writing a source
 
+Full brief for plugin authors (engine behaviour, limits, feature requests): [`docs/AUTHORING.md`](docs/AUTHORING.md).
+
 - `key`: `^[a-z0-9][a-z0-9-]{1,62}$`, equal to the directory name (`sources/<key>/`); `vovoscan` is reserved.
 - `kinds`: `comic`, `book` (served today), `audiobook`, `video` (planned by the contract). Each declared kind has
   its rules in `content` (`comic`: a list of pages; `book`: an EPUB file).
