@@ -1,0 +1,55 @@
+{
+  "$schema": "../../schema/source.schema.json",
+  "contractVersion": 1,
+  "key": "standardebooks",
+  "name": "Standard Ebooks",
+  "version": "1.0.0",
+  "description": "Hand-crafted, professional-grade public-domain ebooks from standardebooks.org, downloaded as EPUB.",
+  "kinds": ["book"],
+  "langs": ["en"],
+  "rights": {
+    "basis": "public-domain",
+    "notes": "Standard Ebooks releases are dedicated to the public domain (CC0 for the editions' own work; the underlying texts are public domain). See standardebooks.org for the details of each edition. Read from standardebooks.org directly, at the manifest rate limit; no bulk downloading."
+  },
+  "hosts": ["standardebooks.org"],
+  "rateLimit": {"requestsPerMinute": 30},
+  "catalog": {
+    "request": {
+      "url": "https://standardebooks.org/ebooks",
+      "type": "html",
+      "query": {"query": "{{search}}"},
+      "pagination": {"type": "startIndex", "param": "page", "pageSize": 1, "base": 1}
+    },
+    "list": {"css": "ol.ebooks-list li"},
+    "item": {
+      "id": {"css": ":self", "attr": "about", "then": [{"regex": "/ebooks/([a-z0-9-]+/[a-z0-9-]+)"}]},
+      "name": {"css": "[property='schema:name']", "then": ["trim"]},
+      "cover": {"css": "img[property='schema:image']", "attr": "src", "then": ["absUrl"]},
+      "kind": {"const": "book"},
+      "format": {"const": "text"},
+      "status": {"const": "completed"}
+    },
+    "hasNext": {"css": "ol.ebooks-list li:nth-of-type(12)", "then": ["notNull"]}
+  },
+  "title": {
+    "request": {"url": "https://standardebooks.org/ebooks/{{id}}", "type": "html"},
+    "fields": {
+      "name": {"css": "h1[property='schema:name']", "then": ["trim"]},
+      "description": {"css": "section#description > div > p", "then": ["collapseSpaces"], "default": ""},
+      "cover": {"css": "img[src*='/images/covers/']", "attr": "src", "then": ["absUrl"]},
+      "authors": {"css": "[property='schema:author'] [property='schema:name']", "then": ["trim"]},
+      "status": {"const": "completed"},
+      "format": {"const": "text"}
+    },
+    "units": {"single": {"id": "{{id}}", "name": "Ebook"}}
+  },
+  "content": {
+    "book": {
+      "request": {"url": "https://standardebooks.org/ebooks/{{id}}", "type": "html"},
+      "document": {
+        "url": {"css": "a.epub", "attr": "href", "then": ["absUrl"]},
+        "mediaType": "application/epub+zip"
+      }
+    }
+  }
+}

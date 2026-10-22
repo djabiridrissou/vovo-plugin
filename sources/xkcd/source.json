@@ -1,0 +1,45 @@
+{
+  "$schema": "../../schema/source.schema.json",
+  "contractVersion": 1,
+  "key": "xkcd",
+  "name": "xkcd",
+  "version": "1.0.0",
+  "description": "xkcd, the webcomic of romance, sarcasm, math and language by Randall Munroe, read from xkcd.com itself.",
+  "kinds": ["comic"],
+  "langs": ["en"],
+  "rights": {
+    "basis": "licensed",
+    "notes": "CC BY-NC 2.5 (xkcd.com/license.html): reuse allowed for non-commercial purposes with attribution to xkcd.com. Read from xkcd.com directly, at the manifest rate limit; no bulk downloading."
+  },
+  "hosts": ["xkcd.com", "imgs.xkcd.com"],
+  "rateLimit": {"requestsPerMinute": 30},
+  "catalog": {
+    "request": {"url": "https://xkcd.com/archive/", "type": "html"},
+    "list": {"css": "#middleContainer a"},
+    "item": {
+      "id": {"css": ":self", "attr": "href", "then": [{"regex": "^/([0-9]+)/$"}]},
+      "name": {"css": ":self", "then": ["trim"]},
+      "kind": {"const": "comic"},
+      "format": {"const": "webcomic"},
+      "status": {"const": "ongoing"}
+    }
+  },
+  "title": {
+    "request": {"url": "https://xkcd.com/{{id}}/", "type": "html"},
+    "fields": {
+      "name": {"css": "#ctitle", "then": ["trim"]},
+      "description": {"css": "#comic img", "attr": "title", "default": ""},
+      "authors": {"const": "Randall Munroe"},
+      "status": {"const": "ongoing"},
+      "format": {"const": "webcomic"}
+    },
+    "units": {"single": {"id": "{{id}}", "name": "Comic"}}
+  },
+  "content": {
+    "comic": {
+      "request": {"url": "https://xkcd.com/{{unitId}}/", "type": "html"},
+      "list": {"css": "#comic img"},
+      "item": {"url": {"css": ":self", "attr": "src", "then": ["absUrl"]}}
+    }
+  }
+}

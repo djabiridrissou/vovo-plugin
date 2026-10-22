@@ -25,6 +25,38 @@
       "manifest": "sources/gutenberg/source.json",
       "sha256": "47e19ca5d310fe5de922e30314bdd5ee1b571e4b8f8d766f4647408b7241909b",
       "changes": "Categories: Fiction, Poetry, Drama, Science fiction, Adventure, Romance, Mystery, Horror, Fairy tales, Children,\nHistory, Philosophy. Each is a subject search of the OPDS feed (s.<subject>), combined with the reader's search\n(query={{search}} {{category}}). Requires an app version that reads categories."
+    },
+    {
+      "key": "standardebooks",
+      "name": "Standard Ebooks",
+      "version": "1.0.0",
+      "contractVersion": 1,
+      "kinds": [
+        "book"
+      ],
+      "langs": [
+        "en"
+      ],
+      "rights": "public-domain",
+      "manifest": "sources/standardebooks/source.json",
+      "sha256": "bdaf655b25dd1d585c38ca6f6c171a7019b9456905cf162a93fc39d51ac35cd5",
+      "changes": "- Standard Ebooks from standardebooks.org directly: catalog from the /ebooks HTML pages (12 per page,\n  server-side ?query= search), metadata and description from each book page, \"Compatible epub\" link as\n  the document (served directly, no redirect). Rights: public domain (CC0 editions of public-domain texts)."
+    },
+    {
+      "key": "xkcd",
+      "name": "xkcd",
+      "version": "1.0.0",
+      "contractVersion": 1,
+      "kinds": [
+        "comic"
+      ],
+      "langs": [
+        "en"
+      ],
+      "rights": "licensed",
+      "manifest": "sources/xkcd/source.json",
+      "sha256": "6a7e22570f21fad80a62c338c43a0f2b6c6594e417fe28e8bf75b186d28b1b5b",
+      "changes": "- xkcd from xkcd.com directly: catalog from /archive/ (~3,300 comics), title and single image per\n  comic from /<n>/, hover text as the description. Rights: CC BY-NC 2.5."
     }
   ]
 }
