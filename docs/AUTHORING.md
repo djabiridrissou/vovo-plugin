@@ -231,6 +231,33 @@ one sends its `id` as `{{category}}` in the **catalog request**. Two forms:
 must be read from a page). Without `request`, `url` is usually a `template` built from `{{id}}` / `{{unitId}}` /
 settings. EPUB only; the phone downloads it once (≤ 30 MB) and reads it offline with scripts and links stripped.
 
+### Format (declare it)
+
+The format decides the reading mode (`manga`: right-to-left pages, `webtoon`: one vertical strip, `text`: a book) and
+which shelf a title lands on when a reader filters by format. **Declare it whenever the site says it**, in
+`catalog.item.format` (every title of a listing at once) and in `title.fields.format` (the title page). Both are
+optional; the values are `manga`, `webtoon` and `text`, anything else reads as `manga`.
+
+Without a declared format, a comic is placed in this order:
+
+1. the title page's `genres`: a title tagged `long strip`, `longstrip`, `webtoon`, `webtoons`, `manhwa`, `manhua`,
+   `vertical` or `vertical scroll` (any case) is a `webtoon`;
+2. once a chapter is opened, its pages: a colour strip is a `webtoon`, other pages stay `manga`;
+3. otherwise `manga`.
+
+The catalog listing only sees step 3 until a chapter has been opened, so a long-strip title sits under Manga in the
+filter. Map the site's own words to ours instead (fictional site):
+
+```json
+"format": {"css": ".badge", "then": ["trim", "lower",
+  {"map": {"long strip": "webtoon", "manhwa": "webtoon", "manhua": "webtoon", "manga": "manga"}, "default": "manga"}]}
+```
+
+A JSON API usually names it in a field (`"format": {"path": "$.attributes.layout", "then": ["lower",
+{"map": {"vertical": "webtoon"}, "default": "manga"}]}`). A site with one format for every title can use
+`{"const": "webtoon"}`. Books need nothing: `text` is their default. A declared `default` is a declaration too: the genres no longer
+apply, so give one only when the site always shows the badge.
+
 ### Ratings (safe mode)
 
 Every account starts in safe mode: only titles rated `safe` show, in browsing, search and the library. Rate your
