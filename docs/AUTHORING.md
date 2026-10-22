@@ -10,6 +10,8 @@ something it doesn't do, don't work around it — write a feature request (last 
   allow automated reading. Never a scanlation or piracy site, never a source that needs to get past a CAPTCHA, an
   anti-bot check, a paywall or a login it isn't entitled to. If a site's terms or `robots.txt` forbid it, don't write
   the source. When in doubt, ask instead of writing it.
+- **Examples name no third-party site.** In docs, schema descriptions, fixtures, tests and commit messages, a
+  source is illustrated with Project Gutenberg or with a fictional name ("My books", "Inkwell"), never another site.
 - **Be gentle with the site.** Keep `rateLimit.requestsPerMinute` low (default 30), never add hosts you don't need.
 - **`rights` is required in this repository.** The contract leaves it optional for third-party repositories, but
   every source published here states `basis` (`public-domain` or `licensed`) and `notes` with the real terms
@@ -228,6 +230,23 @@ one sends its `id` as `{{category}}` in the **catalog request**. Two forms:
 `document` { `url` (value), `mediaType`: `"application/epub+zip"` } and an optional `request` (when the file URL
 must be read from a page). Without `request`, `url` is usually a `template` built from `{{id}}` / `{{unitId}}` /
 settings. EPUB only; the phone downloads it once (≤ 30 MB) and reads it offline with scripts and links stripped.
+
+### Ratings (safe mode)
+
+Every account starts in safe mode: only titles rated `safe` show, in browsing, search and the library. Rate your
+titles, or they stay hidden.
+
+```json
+"ratings": {"default": "safe", "map": {"18+": "erotica", "mature": "suggestive"}},
+"catalog": {"item": {"contentRating": "$.attributes.contentRating"}},
+"title": {"fields": {"contentRating": "$.data.attributes.contentRating"}}
+```
+
+- Our scale: `safe`, `suggestive`, `erotica`, `pornographic` (a source that already uses these values needs no `map`).
+- `contentRating` (catalog item and title fields) is any value rule; its result is lower-cased and looked up in
+  `map`, else taken as is when it names one of ours; anything else is unknown. With no value at all, `default`.
+- Rate both the catalog item and the title page, or the title page falls back to `default`.
+- Unknown is hidden in safe mode. Never declare `default: safe` for a source that may hold adult titles.
 
 ## 7. Checking your work
 
