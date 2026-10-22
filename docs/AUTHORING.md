@@ -79,6 +79,10 @@ refused). Examples: `sources/gutenberg/source.json` (JSON API) and the HTML exam
   - `{"type": "cursor", "param": "cursor", "from": {"path": "$.nextCursor"}}` — page 1 is the plain request;
     each next page repeats it with `param=<value extracted from the previous response by `from`>`; an empty
     extraction means no next page.
+- `let` (optional): rules evaluated on the whole response, named for the section's templates —
+  `{"let": {"base": "$.baseUrl", "hash": "$.chapter.hash"}}` makes `{{base}}` and `{{hash}}` usable in the
+  section's item rules (e.g. page URLs built as `{"format": "{{base}}/data/{{hash}}/{value}"}`). A name whose
+  rule finds nothing is left empty.
 - Every host, including after redirects, must be in `hosts` or come from a `url` setting; **at most 3 redirects**,
   each checked again; the query string is dropped after a redirect.
 - Timeouts: 10 s to connect, 30 s per request. Size: **5 MB** for catalog/title/content responses, 30 MB for
@@ -91,10 +95,11 @@ refused). Examples: `sources/gutenberg/source.json` (JSON API) and the HTML exam
 | `{{settings.<name>}}` | everywhere | the setting's value (declare it in `settings`, `check-source` refuses undeclared ones) |
 | `{{page}}` | catalog | 1, 2, 3… |
 | `{{search}}` | catalog | the user's search, empty while browsing |
-| `{{id}}` | title, content, units.single | the title id from the catalog item |
+| `{{id}}` | title, content, units | the title id from the catalog item; **inside a catalog item's or unit's own rules, it is that item's id** (e.g. a cover URL `/covers/{{id}}/…`) |
 | `{{unitId}}` | content | the unit (chapter) id |
 | `{{cursor}}` | catalog | next-page cursor, set by the engine when `pagination` is `cursor` (empty on page 1) |
-| `{{lang}}` | — | **always empty today** (not wired to the user's language): don't rely on it |
+| `{{lang}}` | everywhere | the device's language, ISO 639-1 (`"fr"`, `"en"`…), lower case; empty if unknown. Filter translated content with it; an empty value is not sent in `query` |
+| names from `let` | that section | values extracted from the response by the section's `let` |
 
 Templates are plain substitution (`{{name}}`, `{{settings.name}}`), no logic or defaults.
 
@@ -161,10 +166,13 @@ on the whole response.
 
 - The title's kind is the **first** of `kinds` (one kind per source in practice).
 - `authors`, `genres`: a list (`"all": true`, or a JSON array, or `pluck` over objects).
-- `units` is either a list — `list` + `item` { `id` (required), `number`, `name` } — or `{"single": {"id":
-  "{{id}}", "name": "Full text"}}` for a book in one file.
+- `units` is a list read **from the title's own response** — `list` + `item` { `id` (required), `number`, `name` } —
+  or, when the chapter list needs its own fetch (API-style sources), a list with a `request`:
+  `{"request": {"url": "…/chapters?manga={{id}}&lang={{lang}}", "type": "json"}, "list": "…", "item": {…}}`.
+  Or `{"single": {"id": "{{id}}", "name": "Full text"}}` for a book in one file.
 - Units: `number` falls back to the position (1, 2, …); **two units with the same number keep only the first**; the
   app sorts by number ascending (reading order). Make `number` a real number (`"then": [{"regex": …}, "number"]`).
+  Inside a unit's rules, `{{id}}` is that unit's own id.
 
 ### `content.comic`
 
@@ -250,7 +258,7 @@ Not supported today (don't fake them):
 
 - request headers (Referer, Accept-Language, API keys), cookies, login, POST / GraphQL;
 - JavaScript-rendered pages; token pagination that is not a plain `cursor` extraction (OAuth flows, signed URLs);
-- `{{lang}}` (always empty), per-user language choice;
+- per-user language choice (`{{lang}}` is the device's language, not a per-source setting);
 - unit dates, volumes, per-unit languages; covers per unit;
 - `audiobook` and `video` kinds; book formats other than EPUB;
 - image requests with headers (hotlink-protected images).
