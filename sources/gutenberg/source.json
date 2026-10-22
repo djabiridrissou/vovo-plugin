@@ -3,7 +3,7 @@
   "contractVersion": 1,
   "key": "gutenberg",
   "name": "Project Gutenberg",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Classic books from the Project Gutenberg catalog at gutenberg.org, read through its official OPDS catalog (public domain in the United States).",
   "kinds": ["book"],
   "langs": ["en", "fr", "de", "es", "it", "pt", "nl"],
@@ -13,12 +13,26 @@
   },
   "hosts": ["www.gutenberg.org"],
   "rateLimit": {"requestsPerMinute": 30},
+  "categories": [
+    {"id": "s.Fiction", "name": "Fiction"},
+    {"id": "s.Poetry", "name": "Poetry"},
+    {"id": "s.Drama", "name": "Drama"},
+    {"id": "s.Science fiction", "name": "Science fiction"},
+    {"id": "s.Adventure", "name": "Adventure"},
+    {"id": "s.Love stories", "name": "Romance"},
+    {"id": "s.Detective", "name": "Mystery"},
+    {"id": "s.Horror", "name": "Horror"},
+    {"id": "s.Fairy tales", "name": "Fairy tales"},
+    {"id": "s.Juvenile", "name": "Children"},
+    {"id": "s.History", "name": "History"},
+    {"id": "s.Philosophy", "name": "Philosophy"}
+  ],
   "catalog": {
     "request": {
       "url": "https://www.gutenberg.org/ebooks/search.opds/",
       "type": "xml",
       "query": {
-        "query": "{{search}}",
+        "query": "{{search}} {{category}}",
         "sort_order": "downloads"
       },
       "pagination": {"type": "startIndex", "param": "start_index", "pageSize": 25, "base": 1}

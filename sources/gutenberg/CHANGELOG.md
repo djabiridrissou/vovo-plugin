@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+Categories: Fiction, Poetry, Drama, Science fiction, Adventure, Romance, Mystery, Horror, Fairy tales, Children,
+History, Philosophy. Each is a subject search of the OPDS feed (`s.<subject>`), combined with the reader's search
+(`query={{search}} {{category}}`). Requires an app version that reads categories.
+
 ## 1.1.1
 
 Declare the rights again: public domain in the United States, with the Project Gutenberg licence terms

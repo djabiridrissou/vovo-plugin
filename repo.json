@@ -7,7 +7,7 @@
     {
       "key": "gutenberg",
       "name": "Project Gutenberg",
-      "version": "1.1.1",
+      "version": "1.2.0",
       "contractVersion": 1,
       "kinds": [
         "book"
@@ -23,8 +23,8 @@
       ],
       "rights": "public-domain",
       "manifest": "sources/gutenberg/source.json",
-      "sha256": "eb7757c11a72f36a0a0c79ed8dcd7b9229b07d300f16872b11e394575fc66013",
-      "changes": "Declare the rights again: public domain in the United States, with the Project Gutenberg licence terms\n(they were dropped in 1.1.0). No change to what the source reads."
+      "sha256": "47e19ca5d310fe5de922e30314bdd5ee1b571e4b8f8d766f4647408b7241909b",
+      "changes": "Categories: Fiction, Poetry, Drama, Science fiction, Adventure, Romance, Mystery, Horror, Fairy tales, Children,\nHistory, Philosophy. Each is a subject search of the OPDS feed (s.<subject>), combined with the reader's search\n(query={{search}} {{category}}). Requires an app version that reads categories."
     }
   ]
 }
