@@ -47,12 +47,17 @@ Full brief for plugin authors (engine behaviour, limits, feature requests): [`do
 - `key`: `^[a-z0-9][a-z0-9-]{1,62}$`, equal to the directory name (`sources/<key>/`); `vovoscan` is reserved.
 - `kinds`: `comic`, `book` (served today), `audiobook`, `video` (planned by the contract). Each declared kind has
   its rules in `content` (`comic`: a list of pages; `book`: an EPUB file).
-- Sections: `catalog` (paginated list, search via `{{search}}`), `title` (details + units: a list, or `single` for
-  a book in a single file), `content`.
+- Sections: `catalog` (paginated list, search via `{{search}}`, category via `{{category}}`), `title` (details +
+  units: a list, or `single` for a book in a single file), `content`; optional `categories` (a fixed list
+  `[{"id", "name"}]` or a request with `list` + `item {id, name}`: the catalog filter; a manifest with categories
+  must use `{{category}}` in its catalog request, and nowhere else).
+- Page images: optional `content.comic.referer`, a template (`"{{settings.baseUrl}}/"`, settings and `{{lang}}`
+  only) sent as `Referer` with image requests to the source's allowed hosts only, never to vovoscan.
 - Values: a JSONPath (`"$.title"`), or `{ "path" | "css" | "const" | "template", "attr", "all", "then": [...],
   "default" }`. Transformations: `trim`, `collapseSpaces`, `string`, `number`, `integer`, `lower`, `absUrl`,
   `first`, `notNull`, `regex`, `replace`, `join`, `map`, `pluck`, `format`.
-- Templates: `{{settings.<setting>}}`, `{{page}}`, `{{search}}`, `{{lang}}`, `{{id}}` (title), `{{unitId}}` (unit).
+- Templates: `{{settings.<setting>}}`, `{{page}}`, `{{search}}`, `{{category}}` (catalog request), `{{lang}}`,
+  `{{id}}` (title), `{{unitId}}` (unit).
 - Hosts: the app only contacts those in `hosts` and in `url`-type settings, with a separate HTTP client that never
   sends the vovoscan session.
 - **Rights**: `rights.basis` is `public-domain` or `licensed`, and `rights.notes` states the source's terms.

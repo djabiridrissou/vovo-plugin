@@ -60,6 +60,7 @@ refused). Examples: `sources/gutenberg/source.json` (JSON API) and the HTML exam
 | `hosts` | Fixed hostnames the phone may contact (lowercase, no scheme). |
 | `rateLimit.requestsPerMinute` | 1–600, default 30, per source on the device. |
 | `catalog`, `title`, `content` | See §6. |
+| `categories` | Optional: the site's categories, offered as a catalog filter. See §6. |
 
 ### Requests
 
@@ -68,7 +69,8 @@ refused). Examples: `sources/gutenberg/source.json` (JSON API) and the HTML exam
 ```
 
 - **GET only.** No custom headers, no cookies, no body, no authentication. Fixed User-Agent
-  `vovoscan/0.1 (+https://vovoscan.yieldgrowth.org)`.
+  `vovoscan/0.1 (+https://vovoscan.yieldgrowth.org)`. The one exception is the page images' Referer
+  (`content.comic.referer`, §6).
 - `type`: `json` (parsed as JSON), `html` (parsed by Ksoup, a jsoup port; no JavaScript is run, so pages built in
   the browser show nothing), or `xml` (parsed by Ksoup in XML mode — Atom/RSS/OPDS feeds; CSS selectors address
   elements by local name, e.g. `entry`, `link[rel=next]`).
@@ -95,6 +97,7 @@ refused). Examples: `sources/gutenberg/source.json` (JSON API) and the HTML exam
 | `{{settings.<name>}}` | everywhere | the setting's value (declare it in `settings`, `check-source` refuses undeclared ones) |
 | `{{page}}` | catalog | 1, 2, 3… |
 | `{{search}}` | catalog | the user's search, empty while browsing |
+| `{{category}}` | catalog request only | the id of the category the reader picked (`categories`), empty while browsing everything. An empty value is not sent in `query`, so `"genre": "{{category}}"` disappears by itself. `check-source` refuses it anywhere else |
 | `{{id}}` | title, content, units | the title id from the catalog item; **inside a catalog item's or unit's own rules, it is that item's id** (e.g. a cover URL `/covers/{{id}}/…`) |
 | `{{unitId}}` | content | the unit (chapter) id |
 | `{{cursor}}` | catalog | next-page cursor, set by the engine when `pagination` is `cursor` (empty on page 1) |
@@ -158,7 +161,40 @@ on the whole response.
   else is read as `manga`. `status`: use `ongoing` or `completed`.
 - `hasNext` must evaluate to **boolean `true`** for the app to ask the next page (`notNull` on a "next" link or a
   JSON `next` field). `total` is a number (optional).
-- Search uses the same request with `{{search}}` filled.
+- Search uses the same request with `{{search}}` filled (and `{{category}}` when a category is picked: both can be
+  sent together).
+
+### `categories` (optional)
+
+The site's categories (genres, shelves, sections). The app offers them as a filter beside the source filter; picking
+one sends its `id` as `{{category}}` in the **catalog request**. Two forms:
+
+```json
+"categories": [{"id": "fiction", "name": "Fiction"}, {"id": "poetry", "name": "Poetry"}]
+```
+
+```json
+"categories": {
+  "request": {"url": "https://api.example.org/genres", "type": "json"},
+  "list": "$.genres[*]",
+  "item": {"id": "$.slug", "name": "$.label"}
+}
+```
+
+- Fixed list: ≤ 200 entries, `id` 1–200 characters (unique), `name` 1–120. A request: read like the catalog (an
+  item without `id` or `name` is skipped); `{{settings.x}}` and `{{lang}}` are available, not `{{page}}`.
+- **A manifest that declares categories must use `{{category}}` in its catalog request** (`url` or `query`),
+  otherwise picking one would change nothing; `check-source` refuses it. `{{category}}` anywhere else is refused too.
+- The app matches categories by name across sources (case-insensitive): name them as the site does ("Science
+  fiction", not "sf").
+
+```json
+"catalog": {
+  "request": {"url": "https://api.example.org/books", "type": "json",
+              "query": {"page": "{{page}}", "search": "{{search}}", "topic": "{{category}}"}},
+  …
+}
+```
 
 ### `title` (required)
 
@@ -179,8 +215,12 @@ on the whole response.
 `request` (with `{{id}}`, `{{unitId}}`), `list` (one node per page image), `item` { `url` (required), `width`,
 `height` (integers, optional) }.
 
-- Images are loaded by the app's image loader with a plain GET: **no Referer, no cookies**. A site that blocks
-  hotlinked images will show broken pages — that's a feature request, not something to work around.
+- Images are loaded by the app's image loader with a plain GET: no cookies, no Referer unless the manifest declares
+  one. `referer` (optional): a template sent as the `Referer` header with the page images (some sites refuse
+  images without it), e.g. `"referer": "{{settings.baseUrl}}/"`. Only `{{settings.x}}` and `{{lang}}` (one Referer
+  for the whole source, not per chapter), and it must be an http(s) address. The phone sends it **only with image
+  requests to the source's allowed hosts** (pages shown, downloaded, and covers from those hosts), never with
+  anything sent to vovoscan. It's for sites that ask for their own pages as Referer, not a way past a protection.
 - Use `absUrl` for relative URLs; prefer the full-size attribute (`data-src`, `srcset` parsing via `regex`).
 
 ### `content.book`
@@ -256,12 +296,13 @@ For a JSON API with settings, a single-unit book and a templated file URL, read 
 
 Not supported today (don't fake them):
 
-- request headers (Referer, Accept-Language, API keys), cookies, login, POST / GraphQL;
+- request headers (Accept-Language, API keys; a Referer only for page images, `content.comic.referer`), cookies,
+  login, POST / GraphQL;
 - JavaScript-rendered pages; token pagination that is not a plain `cursor` extraction (OAuth flows, signed URLs);
 - per-user language choice (`{{lang}}` is the device's language, not a per-source setting);
 - unit dates, volumes, per-unit languages; covers per unit;
 - `audiobook` and `video` kinds; book formats other than EPUB;
-- image requests with headers (hotlink-protected images).
+- image requests with headers other than the Referer (cookies, tokens, signed image URLs).
 
 When a legitimate source needs one of these, stop and report a **feature request** instead of a workaround:
 
@@ -281,5 +322,6 @@ mobile app (`core/sources`), then the schema copy here; a new contract feature m
 - [ ] `sources/<key>/source.json`, `README.md` (rights, terms, settings, what you checked), `CHANGELOG.md`.
 - [ ] Rights are real and the site allows this use; no protection bypassed; low rate limit; minimal hosts.
 - [ ] `python3 scripts/build-index.py` run, `repo.json` updated; `scripts/check.sh` passes.
-- [ ] Rules checked by hand against real responses (catalog page 1 and 2, a search, a title, one unit's content).
+- [ ] Rules checked by hand against real responses (catalog page 1 and 2, a search, a title, one unit's content; with
+      categories, the category list and one category's catalog).
 - [ ] Feature requests, if any, written as above.
