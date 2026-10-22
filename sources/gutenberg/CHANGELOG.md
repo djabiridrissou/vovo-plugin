@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.0
+
+Read gutenberg.org directly instead of a self-hosted Gutendex plus a mirror.
+
+- Catalog: the site's official OPDS search feed (`/ebooks/search.opds/`), paginated by `start_index`.
+- Title: `/ebooks/<id>.opds` (name, authors, LCSH subjects, Summary when present).
+- Books: EPUB from `www.gutenberg.org` itself; covers from `/cache/epub/<id>/`.
+- Settings removed: no more Gutendex instance or mirror to host; hosts reduced to `www.gutenberg.org`.
+- Requires the engine features `xml` response type and `startIndex` pagination.
+
 ## 1.0.0
 
 First release.

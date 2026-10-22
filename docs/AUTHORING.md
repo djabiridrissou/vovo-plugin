@@ -11,8 +11,8 @@ something it doesn't do, don't work around it — write a feature request (last 
   anti-bot check, a paywall or a login it isn't entitled to. If a site's terms or `robots.txt` forbid it, don't write
   the source. When in doubt, ask instead of writing it.
 - **Be gentle with the site.** Keep `rateLimit.requestsPerMinute` low (default 30), never add hosts you don't need.
-- **`rights` must be true.** `basis` is `public-domain` or `licensed`; `notes` states the real terms (licence,
-  attribution, territories, commercial limits). For an official source an admin checks it before activation.
+- **`rights` is optional.** When present, `basis` is `public-domain` or `licensed`; `notes` states the real terms
+  (licence, attribution, territories, commercial limits). For an official source an admin checks it before activation.
 - **No code.** A plugin is a JSON manifest: requests, extractions and a fixed list of transforms. Nothing in it runs.
 
 ## 2. How a plugin runs
@@ -53,7 +53,7 @@ refused). Examples: `sources/gutenberg/source.json` (JSON API) and the HTML exam
 | `key`, `name` (≤ 120), `version` (`x.y.z`), `description` (≤ 1000) | |
 | `kinds` | `comic` and/or `book` (served). `audiobook`, `video` are in the contract but not enabled: the app refuses them. Every declared kind needs its `content` rules. |
 | `langs` | ISO 639-1 codes of the content (`["en", "fr"]`). Informational today. |
-| `rights` | `{ "basis": "public-domain" \| "licensed", "notes": "≥ 10 chars" }` |
+| `rights` (optional) | `{ "basis": "public-domain" \| "licensed", "notes": "≥ 10 chars" }` |
 | `settings` | `{ "<name>": { "label", "type": "url" \| "string" \| "integer", "required"?, "default"?, "help"? } }`. Users (or admins for official sources) fill them in the app. `url` values must be https; their host is allowed automatically. Use them for instance or mirror addresses. |
 | `hosts` | Fixed hostnames the phone may contact (lowercase, no scheme). |
 | `rateLimit.requestsPerMinute` | 1–600, default 30, per source on the device. |
@@ -67,9 +67,16 @@ refused). Examples: `sources/gutenberg/source.json` (JSON API) and the HTML exam
 
 - **GET only.** No custom headers, no cookies, no body, no authentication. Fixed User-Agent
   `vovoscan/0.1 (+https://vovoscan.yieldgrowth.org)`.
-- `type`: `json` (parsed as JSON) or `html` (parsed by Ksoup, a jsoup port; no JavaScript is run, so pages built in
-  the browser show nothing).
+- `type`: `json` (parsed as JSON), `html` (parsed by Ksoup, a jsoup port; no JavaScript is run, so pages built in
+  the browser show nothing), or `xml` (parsed by Ksoup in XML mode — Atom/RSS/OPDS feeds; CSS selectors address
+  elements by local name, e.g. `entry`, `link[rel=next]`).
 - `query` values are templates; **an empty value is not sent** (so `{{search}}` disappears while browsing).
+- `pagination` (optional, catalog only), for sites that don't take a page number:
+  - `{"type": "startIndex", "param": "start_index", "pageSize": 25, "base": 1}` — the engine sends
+    `start_index = base + (page - 1) * pageSize` (never for page 1 when it equals `base`);
+  - `{"type": "cursor", "param": "cursor", "from": {"path": "$.nextCursor"}}` — page 1 is the plain request;
+    each next page repeats it with `param=<value extracted from the previous response by `from`>`; an empty
+    extraction means no next page.
 - Every host, including after redirects, must be in `hosts` or come from a `url` setting; **at most 3 redirects**,
   each checked again; the query string is dropped after a redirect.
 - Timeouts: 10 s to connect, 30 s per request. Size: **5 MB** for catalog/title/content responses, 30 MB for
@@ -84,6 +91,7 @@ refused). Examples: `sources/gutenberg/source.json` (JSON API) and the HTML exam
 | `{{search}}` | catalog | the user's search, empty while browsing |
 | `{{id}}` | title, content, units.single | the title id from the catalog item |
 | `{{unitId}}` | content | the unit (chapter) id |
+| `{{cursor}}` | catalog | next-page cursor, set by the engine when `pagination` is `cursor` (empty on page 1) |
 | `{{lang}}` | — | **always empty today** (not wired to the user's language): don't rely on it |
 
 Templates are plain substitution (`{{name}}`, `{{settings.name}}`), no logic or defaults.
@@ -239,7 +247,7 @@ For a JSON API with settings, a single-unit book and a templated file URL, read 
 Not supported today (don't fake them):
 
 - request headers (Referer, Accept-Language, API keys), cookies, login, POST / GraphQL;
-- JavaScript-rendered pages; cursor or token pagination (only `{{page}}` numbers);
+- JavaScript-rendered pages; token pagination that is not a plain `cursor` extraction (OAuth flows, signed URLs);
 - `{{lang}}` (always empty), per-user language choice;
 - unit dates, volumes, per-unit languages; covers per unit;
 - `audiobook` and `video` kinds; book formats other than EPUB;

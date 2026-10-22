@@ -7,7 +7,7 @@
     {
       "key": "gutenberg",
       "name": "Project Gutenberg",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "contractVersion": 1,
       "kinds": [
         "book"
@@ -21,10 +21,10 @@
         "pt",
         "nl"
       ],
-      "rights": "public-domain",
+      "rights": null,
       "manifest": "sources/gutenberg/source.json",
-      "sha256": "5466f1cdcb954f6d0e21f5b7887d9bba233adc8805e1e7c4453129c9c09ea3cf",
-      "changes": "First release.\n\n- Browse and search the Project Gutenberg catalog through a Gutendex instance (books still under copyright are excluded).\n- Books are EPUB files downloaded from a Project Gutenberg mirror and read on the device.\n- Settings: Gutendex instance, Project Gutenberg mirror, catalog languages (default: en,fr)."
+      "sha256": "e87df1fb9eb2350a9f1eb85d5acb33399ef1e25dba068dcb08f1b6662723ad2e",
+      "changes": "Read gutenberg.org directly instead of a self-hosted Gutendex plus a mirror.\n\n- Catalog: the site's official OPDS search feed (/ebooks/search.opds/), paginated by start_index.\n- Title: /ebooks/<id>.opds (name, authors, LCSH subjects, Summary when present).\n- Books: EPUB from www.gutenberg.org itself; covers from /cache/epub/<id>/.\n- Settings removed: no more Gutendex instance or mirror to host; hosts reduced to www.gutenberg.org.\n- Requires the engine features xml response type and startIndex pagination."
     }
   ]
 }

@@ -11,7 +11,6 @@
     "version",
     "kinds",
     "langs",
-    "rights",
     "catalog",
     "title",
     "content"
@@ -345,7 +344,64 @@
         "type": {
           "enum": [
             "json",
-            "html"
+            "html",
+            "xml"
+          ],
+          "description": "json: parsed as JSON. html: parsed by Ksoup (HTML, no JavaScript). xml: parsed by Ksoup in XML mode (Atom/RSS/OPDS feeds), CSS selectors address elements by local name."
+        },
+        "pagination": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "type",
+                "param",
+                "pageSize"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "const": "startIndex"
+                },
+                "param": {
+                  "type": "string",
+                  "description": "Query parameter carrying the start position, computed from {{page}}."
+                },
+                "pageSize": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "base": {
+                  "type": "integer",
+                  "description": "Start position of page 1 (default 1; an offset base of 0 is expressed with base 0).",
+                  "default": 1
+                }
+              },
+              "description": "startIndex pagination for sources that don't take a page number: the engine sends param = base + (page - 1) * pageSize (never sent for page 1 when it equals base). Only meaningful where {{page}} is available (catalog)."
+            },
+            {
+              "type": "object",
+              "required": [
+                "type",
+                "param",
+                "from"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "const": "cursor"
+                },
+                "param": {
+                  "type": "string",
+                  "description": "Query parameter carrying the cursor for the next page."
+                },
+                "from": {
+                  "$ref": "#/$defs/value",
+                  "description": "Rule evaluated on the whole response, extracting the next cursor (e.g. {\"path\": \"$.nextCursor\"}). An empty result means no next page."
+                }
+              },
+              "description": "Cursor pagination: page 1 is the plain request; each next page repeats it with param=<cursor extracted from the previous response>. Only meaningful in the catalog."
+            }
           ]
         }
       }

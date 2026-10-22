@@ -2,33 +2,35 @@
 
 Classic books from the Project Gutenberg catalog, public domain in the United States. Kind: `book` (EPUB).
 
-## Rights
+The source reads **gutenberg.org directly**: catalog and title metadata from its official OPDS feeds
+(Atom/XML), EPUB files and covers from the site's own `/cache/epub/` paths. No third-party instance,
+no mirror, no setting to fill.
 
-- The texts are public domain in the **United States** only. Elsewhere (Togo, Ghana, France…), the copyright term
-  depends on the country (author's life + 50 or 70 years): check before opening the source in a country.
-- The few works still under copyright (distributed with their author's permission) are excluded: `copyright=false`.
-- Free distribution: the files stay as they are, with the Project Gutenberg licence notice.
-- Paid access: a 20% royalty on profits to the Project Gutenberg Literary Archive Foundation, unless every mention
-  of Project Gutenberg is removed from the files.
-- Each reader's app queries the catalog and downloads the book they open (like a browser); never bulk harvesting.
-  Project Gutenberg forbids automated access to gutenberg.org: the catalog comes from a Gutendex instance
-  (preferably our own; the public instance asks you to host one for sustained use), the files from a mirror.
+Note: gutenberg.org's `robots.txt` disallows `/ebooks/search` (its HTML pages also carry an explicit
+no-scraping warning); this source never touches them. It uses the OPDS catalog the site publishes
+for machine access (`/ebooks/search.opds/`, `/ebooks/<id>.opds`), at the manifest rate limit.
 
 ## Settings
 
-Filled by an admin on activation (official source), or by the user in the app when added from the repository,
-a link or a `.vovo` file.
+None.
 
-| Setting | Required | Purpose |
-|---|---|---|
-| `catalogBaseUrl` | yes | Gutendex instance hosted by us, built from the Project Gutenberg offline catalog (github.com/garethbjohnson/gutendex). |
-| `filesBaseUrl` | yes | Mirror (private or official) serving `/cache/epub/<id>/`, from which the app downloads the opened book. |
-| `languages` | no (`en,fr`) | Catalog languages, comma-separated ISO 639-1 codes. |
+## Engine features used
+
+- `type: "xml"` (OPDS/Atom feeds, CSS selectors on element names) — requires an app version that
+  supports contract features `xml` + `pagination`.
+- `pagination: {"type": "startIndex", "param": "start_index", "pageSize": 25, "base": 1}` — the OPDS
+  catalog paginates by start position (1, 26, 51…), not by page number.
 
 ## Activation
 
 ```http
 POST /api/v1/admin/sources            { "manifest": <source.json> }
-PATCH /api/v1/admin/sources/gutenberg { "settings": { "catalogBaseUrl": "https://…", "filesBaseUrl": "https://…" },
-                                        "rightsBasis": "public-domain", "status": "active" }
+PATCH /api/v1/admin/sources/gutenberg { "status": "active" }
 ```
+
+## Checked by hand (2026-10-21)
+
+`curl` with the app User-Agent: search feed with and without query (25 entries, `rel="next"`),
+title feed (name, author, LCSH subjects, Summary paragraph, EPUB acquisition link), cover URLs
+(HTTP 200 on ids 5, 10, 84, 103), EPUB path `/cache/epub/103/pg103-images.epub` (reached through
+`/ebooks/103.epub.images`, one same-host redirect).

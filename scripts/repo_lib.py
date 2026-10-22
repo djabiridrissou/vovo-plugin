@@ -39,7 +39,7 @@ SEMVER_RE = re.compile(
     r"(?:-((?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*))*))?$"
 )
 REQUIRED_FIELDS = (
-    "contractVersion", "key", "name", "version", "kinds", "langs", "rights", "catalog", "title", "content",
+    "contractVersion", "key", "name", "version", "kinds", "langs", "catalog", "title", "content",
 )
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
@@ -120,9 +120,9 @@ def parse_manifest(data: bytes, label: str) -> dict:
         raise RepoError(f"{label}: contractVersion must be an integer.")
     if not is_semver(manifest["version"]):
         raise RepoError(f"{label}: version {manifest['version']!r} is not semver MAJOR.MINOR.PATCH[-prerelease].")
-    rights = manifest["rights"]
-    if not isinstance(rights, dict) or not isinstance(rights.get("basis"), str):
-        raise RepoError(f"{label}: rights.basis is required.")
+    rights = manifest.get("rights")
+    if rights is not None and (not isinstance(rights, dict) or not isinstance(rights.get("basis"), str)):
+        raise RepoError(f"{label}: rights, when present, must be an object with a string basis.")
     for field in ("kinds", "langs"):
         value = manifest[field]
         if not isinstance(value, list) or not all(isinstance(item, str) for item in value):

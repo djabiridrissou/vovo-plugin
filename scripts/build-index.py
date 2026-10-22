@@ -46,7 +46,7 @@ def entry(source: Source) -> dict:
         "contractVersion": manifest["contractVersion"],
         "kinds": manifest["kinds"],
         "langs": manifest["langs"],
-        "rights": manifest["rights"]["basis"],
+        "rights": manifest.get("rights", {}).get("basis"),
         # Relative to the URL of repo.json, which sits at the repository root.
         "manifest": f"sources/{source.key}/source.json",
         "sha256": sha256_hex(source.manifest_bytes),
