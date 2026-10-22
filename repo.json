@@ -7,7 +7,7 @@
     {
       "key": "gutenberg",
       "name": "Project Gutenberg",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "contractVersion": 1,
       "kinds": [
         "book"
@@ -23,8 +23,8 @@
       ],
       "rights": "public-domain",
       "manifest": "sources/gutenberg/source.json",
-      "sha256": "47e19ca5d310fe5de922e30314bdd5ee1b571e4b8f8d766f4647408b7241909b",
-      "changes": "Categories: Fiction, Poetry, Drama, Science fiction, Adventure, Romance, Mystery, Horror, Fairy tales, Children,\nHistory, Philosophy. Each is a subject search of the OPDS feed (s.<subject>), combined with the reader's search\n(query={{search}} {{category}}). Requires an app version that reads categories."
+      "sha256": "86c60d87c90d397436fdd317b59004bce065b57545eccfa4a9249a8f30982ac5",
+      "changes": "Rated for safe mode: every book is safe, except those Project Gutenberg files under an \"Erotic …\" subject (Library\nof Congress subject headings), which are rated erotica. Requires an app version that reads ratings."
     }
   ]
 }

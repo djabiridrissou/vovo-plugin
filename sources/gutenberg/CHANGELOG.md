@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0
+
+Rated for safe mode: every book is safe, except those Project Gutenberg files under an "Erotic …" subject (Library
+of Congress subject headings), which are rated erotica. Requires an app version that reads ratings.
+
 ## 1.2.0
 
 Categories: Fiction, Poetry, Drama, Science fiction, Adventure, Romance, Mystery, Horror, Fairy tales, Children,

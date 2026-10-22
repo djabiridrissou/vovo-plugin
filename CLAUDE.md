@@ -65,7 +65,15 @@ Full brief for plugin authors (engine behaviour, limits, feature requests): [`do
   `check.sh` refuse a source without them (`REQUIRE_RIGHTS` in `scripts/repo_lib.py`).
   For an official source, the backend refuses activation without a rights basis confirmed by an admin (proof
   required for `licensed`). No source that bypasses a protection (CAPTCHA, anti-bot) or violates a site's terms.
+- **Ratings** (safe mode, on by default for every account): `contentRating` in `catalog.item` and `title.fields` reads
+  the title's rating as the source gives it (for example `$.attributes.contentRating`); the top-level `ratings`
+  turns it into ours (`safe`, `suggestive`, `erotica`, `pornographic`): `map` (the source's values, lower case) and
+  `default` (titles the source gives no value for). An unmapped value, or no value without a default, is unknown,
+  and safe mode hides unknown titles: a source that never rates must declare `default`. Gutenberg: `default: safe`,
+  books under an "Erotic …" subject are `erotica`.
 - The manifest must stay ≤ 256 KB.
+- Examples (docs, schema descriptions, fixtures, tests, commit messages) name Project Gutenberg or a fictional source
+  only, never another third-party site.
 - The schema changes in the backend first, then is copied here (`scripts/check.sh` checks that they are equal).
   The Gutenberg manifest has a copy in the backend tests (`tests/fixtures/sources/gutenberg.json`).
 

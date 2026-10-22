@@ -3,7 +3,7 @@
   "contractVersion": 1,
   "key": "gutenberg",
   "name": "Project Gutenberg",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Classic books from the Project Gutenberg catalog at gutenberg.org, read through its official OPDS catalog (public domain in the United States).",
   "kinds": ["book"],
   "langs": ["en", "fr", "de", "es", "it", "pt", "nl"],
@@ -13,6 +13,7 @@
   },
   "hosts": ["www.gutenberg.org"],
   "rateLimit": {"requestsPerMinute": 30},
+  "ratings": {"default": "safe", "map": {"erotic": "erotica"}},
   "categories": [
     {"id": "s.Fiction", "name": "Fiction"},
     {"id": "s.Poetry", "name": "Poetry"},
@@ -56,6 +57,7 @@
       "cover": {"template": "https://www.gutenberg.org/cache/epub/{{id}}/pg{{id}}.cover.medium.jpg"},
       "authors": {"css": "entry author name"},
       "genres": {"css": "entry category[scheme='http://purl.org/dc/terms/LCSH']", "attr": "term", "all": true},
+      "contentRating": {"css": "entry category[scheme='http://purl.org/dc/terms/LCSH'][term*='Erotic']", "attr": "term", "then": [{"regex": "(Erotic)"}, "lower"]},
       "status": {"const": "completed"},
       "format": {"const": "text"}
     },
