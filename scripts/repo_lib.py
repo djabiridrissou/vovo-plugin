@@ -22,6 +22,10 @@ FORMAT_VERSION = 1
 REPO_ID = "app.vovoscan.official"
 REPO_NAME = "vovoscan official sources"
 REPO_HOMEPAGE = "https://github.com/djabiridrissou/vovo-plugin"
+# Our official repository: every source states its rights (public-domain or licensed, with its terms). The
+# contract makes `rights` optional for third-party repositories, which may reuse these scripts with False.
+REQUIRE_RIGHTS = True
+RIGHTS_BASES = {"public-domain", "licensed"}
 
 MAX_REPO_BYTES = 512 * KB
 MAX_SOURCES = 500
@@ -121,8 +125,14 @@ def parse_manifest(data: bytes, label: str) -> dict:
     if not is_semver(manifest["version"]):
         raise RepoError(f"{label}: version {manifest['version']!r} is not semver MAJOR.MINOR.PATCH[-prerelease].")
     rights = manifest.get("rights")
+    if rights is None and REQUIRE_RIGHTS:
+        raise RepoError(f"{label}: rights are required in this repository (basis public-domain or licensed, with notes).")
     if rights is not None and (not isinstance(rights, dict) or not isinstance(rights.get("basis"), str)):
         raise RepoError(f"{label}: rights, when present, must be an object with a string basis.")
+    if rights is not None and REQUIRE_RIGHTS:
+        notes = rights.get("notes")
+        if rights["basis"] not in RIGHTS_BASES or not isinstance(notes, str) or len(notes.strip()) < 10:
+            raise RepoError(f"{label}: rights need a basis among {sorted(RIGHTS_BASES)} and notes stating the terms.")
     for field in ("kinds", "langs"):
         value = manifest[field]
         if not isinstance(value, list) or not all(isinstance(item, str) for item in value):

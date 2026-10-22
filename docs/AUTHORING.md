@@ -11,8 +11,10 @@ something it doesn't do, don't work around it — write a feature request (last 
   anti-bot check, a paywall or a login it isn't entitled to. If a site's terms or `robots.txt` forbid it, don't write
   the source. When in doubt, ask instead of writing it.
 - **Be gentle with the site.** Keep `rateLimit.requestsPerMinute` low (default 30), never add hosts you don't need.
-- **`rights` is optional.** When present, `basis` is `public-domain` or `licensed`; `notes` states the real terms
-  (licence, attribution, territories, commercial limits). For an official source an admin checks it before activation.
+- **`rights` is required in this repository.** The contract leaves it optional for third-party repositories, but
+  every source published here states `basis` (`public-domain` or `licensed`) and `notes` with the real terms
+  (licence, attribution, territories, commercial limits); `build-index.py` and `check.sh` refuse a source without
+  them (`REQUIRE_RIGHTS` in `scripts/repo_lib.py`). For an official source an admin also checks it before activation.
 - **No code.** A plugin is a JSON manifest: requests, extractions and a fixed list of transforms. Nothing in it runs.
 
 ## 2. How a plugin runs
@@ -53,7 +55,7 @@ refused). Examples: `sources/gutenberg/source.json` (JSON API) and the HTML exam
 | `key`, `name` (≤ 120), `version` (`x.y.z`), `description` (≤ 1000) | |
 | `kinds` | `comic` and/or `book` (served). `audiobook`, `video` are in the contract but not enabled: the app refuses them. Every declared kind needs its `content` rules. |
 | `langs` | ISO 639-1 codes of the content (`["en", "fr"]`). Informational today. |
-| `rights` (optional) | `{ "basis": "public-domain" \| "licensed", "notes": "≥ 10 chars" }` |
+| `rights` | `{ "basis": "public-domain" \| "licensed", "notes": "≥ 10 chars" }` — optional in the contract, required in this repository |
 | `settings` | `{ "<name>": { "label", "type": "url" \| "string" \| "integer", "required"?, "default"?, "help"? } }`. Users (or admins for official sources) fill them in the app. `url` values must be https; their host is allowed automatically. Use them for instance or mirror addresses. |
 | `hosts` | Fixed hostnames the phone may contact (lowercase, no scheme). |
 | `rateLimit.requestsPerMinute` | 1–600, default 30, per source on the device. |

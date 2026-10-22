@@ -7,7 +7,7 @@
     {
       "key": "gutenberg",
       "name": "Project Gutenberg",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "contractVersion": 1,
       "kinds": [
         "book"
@@ -21,10 +21,10 @@
         "pt",
         "nl"
       ],
-      "rights": null,
+      "rights": "public-domain",
       "manifest": "sources/gutenberg/source.json",
-      "sha256": "e87df1fb9eb2350a9f1eb85d5acb33399ef1e25dba068dcb08f1b6662723ad2e",
-      "changes": "Read gutenberg.org directly instead of a self-hosted Gutendex plus a mirror.\n\n- Catalog: the site's official OPDS search feed (/ebooks/search.opds/), paginated by start_index.\n- Title: /ebooks/<id>.opds (name, authors, LCSH subjects, Summary when present).\n- Books: EPUB from www.gutenberg.org itself; covers from /cache/epub/<id>/.\n- Settings removed: no more Gutendex instance or mirror to host; hosts reduced to www.gutenberg.org.\n- Requires the engine features xml response type and startIndex pagination."
+      "sha256": "eb7757c11a72f36a0a0c79ed8dcd7b9229b07d300f16872b11e394575fc66013",
+      "changes": "Declare the rights again: public domain in the United States, with the Project Gutenberg licence terms\n(they were dropped in 1.1.0). No change to what the source reads."
     }
   ]
 }

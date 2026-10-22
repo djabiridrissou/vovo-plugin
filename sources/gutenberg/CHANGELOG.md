@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1
+
+Declare the rights again: public domain in the United States, with the Project Gutenberg licence terms
+(they were dropped in 1.1.0). No change to what the source reads.
+
 ## 1.1.0
 
 Read gutenberg.org directly instead of a self-hosted Gutendex plus a mirror.

@@ -3,10 +3,14 @@
   "contractVersion": 1,
   "key": "gutenberg",
   "name": "Project Gutenberg",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Classic books from the Project Gutenberg catalog at gutenberg.org, read through its official OPDS catalog (public domain in the United States).",
   "kinds": ["book"],
   "langs": ["en", "fr", "de", "es", "it", "pt", "nl"],
+  "rights": {
+    "basis": "public-domain",
+    "notes": "Public domain in the United States; check local copyright terms elsewhere. A few books in the catalog are still under copyright in the US: their Project Gutenberg page says so. Free distribution keeps the Project Gutenberg licence notice inside each file; charging for access requires a 20% royalty to the Project Gutenberg Literary Archive Foundation, unless every Project Gutenberg reference is removed. Read through gutenberg.org's official OPDS catalog, by each reader's device, at a low rate; no bulk downloading."
+  },
   "hosts": ["www.gutenberg.org"],
   "rateLimit": {"requestsPerMinute": 30},
   "catalog": {

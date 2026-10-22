@@ -56,6 +56,8 @@ Full brief for plugin authors (engine behaviour, limits, feature requests): [`do
 - Hosts: the app only contacts those in `hosts` and in `url`-type settings, with a separate HTTP client that never
   sends the vovoscan session.
 - **Rights**: `rights.basis` is `public-domain` or `licensed`, and `rights.notes` states the source's terms.
+  Optional in the contract (third-party repositories), **required in this repository**: `build-index.py` and
+  `check.sh` refuse a source without them (`REQUIRE_RIGHTS` in `scripts/repo_lib.py`).
   For an official source, the backend refuses activation without a rights basis confirmed by an admin (proof
   required for `licensed`). No source that bypasses a protection (CAPTCHA, anti-bot) or violates a site's terms.
 - The manifest must stay ≤ 256 KB.
