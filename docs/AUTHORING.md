@@ -204,13 +204,19 @@ one sends its `id` as `{{category}}` in the **catalog request**. Two forms:
 
 - The title's kind is the **first** of `kinds` (one kind per source in practice).
 - `authors`, `genres`: a list (`"all": true`, or a JSON array, or `pluck` over objects).
-- `units` is a list read **from the title's own response** — `list` + `item` { `id` (required), `number`, `name` } —
+- `units` is a list read **from the title's own response** — `list` + `item` { `id` (required), `number`, `name`,
+  `date` } —
   or, when the chapter list needs its own fetch (API-style sources), a list with a `request`:
   `{"request": {"url": "…/chapters?manga={{id}}&lang={{lang}}", "type": "json"}, "list": "…", "item": {…}}`.
   Or `{"single": {"id": "{{id}}", "name": "Full text"}}` for a book in one file.
 - Units: `number` falls back to the position (1, 2, …); **two units with the same number keep only the first**; the
   app sorts by number ascending (reading order). Make `number` a real number (`"then": [{"regex": …}, "number"]`).
   Inside a unit's rules, `{{id}}` is that unit's own id.
+- `date` (optional): when the unit came out at the source. The app reads an ISO 8601 date or time (no offset = UTC),
+  a Unix time (seconds or milliseconds), an English date (`November 2, 2026`, `Nov 2, 2026`, `2 November 2026`) or an
+  English relative time (`2 days ago`, `an hour ago`, `yesterday`); anything else, a slashed date (`02/11/2026`) or a
+  time more than a day ahead is no date. Point it at the raw value (`"$.publishedAt"`, or the text of the date
+  element); readers see when each chapter came out and which source is up to date.
 
 ### `content.comic`
 
